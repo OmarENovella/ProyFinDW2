@@ -1,0 +1,23 @@
+{% extends "hdrftr.html" %}
+{% block title %}Editar entrenador{% endblock %}
+{% block content %}
+
+<h2>Editar Entrenador</h2>
+<form action="/coaches/update/{{ coach.id }}" method="post">
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" value="{{ coach.name }}" required><br>
+
+    <label for="phone">Teléfono:</label>
+    <input type="text" id="phone" name="phone" value="{{ coach.phone }}" required><br>
+
+    <label for="email">Correo electrónico:</label>
+    <input type="email" id="email" name="email" value="{{ coach.email }}" required><br>
+
+    <label for="hiring_date">Fecha de contratación:</label>
+    <input type="date" id="hiring_date" name="hiring_date" value="{{ coach.hiring_date }}" required><br>
+
+    <button type="submit">Actualizar</button>
+</form>
+
+
+{% endblock %}

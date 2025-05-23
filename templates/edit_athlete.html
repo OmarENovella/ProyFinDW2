@@ -1,0 +1,33 @@
+{% extends "hdrftr.html" %}
+{% block title %}Editar deportista{% endblock %}
+{% block content %}
+
+<h1>Editar deportista</h1>
+
+<form method="post" action="/athletes/{{ athlete.id }}/update">
+    <input type="hidden" name="id" value="{{ athlete.id }}">
+
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" value="{{ athlete.name }}" required><br>
+
+    <label for="major">Carrera:</label>
+    <input type="text" id="major" name="major" value="{{ athlete.major }}" required><br>
+
+    <label for="birth_day">Fecha de nacimiento:</label>
+    <input type="date" id="birth_day" name="birth_day" value="{{ athlete.birth_day }}" required><br>
+
+    <label for="admission_date">Fecha de admisión:</label>
+    <input type="date" id="admission_date" name="admission_date" value="{{ athlete.admission_date }}" required><br>
+
+    <label for="status">Estado:</label>
+    <select id="status" name="status">
+        <option value="activo" {% if athlete.status == 'activo' %}selected{% endif %}>Activo</option>
+        <option value="inactivo" {% if athlete.status == 'inactivo' %}selected{% endif %}>Inactivo</option>
+        <option value="suspendido" {% if athlete.status == 'suspendido' %}selected{% endif %}>Suspendido</option>
+    </select><br><br>
+
+    <button type="submit">Actualizar</button>
+</form>
+
+
+{% endblock %}

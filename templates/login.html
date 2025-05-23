@@ -1,0 +1,21 @@
+{% extends "hdrftr.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='styles/login.css') }}">
+{% endblock %}
+
+<div class="logger">
+    <h1>
+        Iniciar Sesion
+    </h1>
+    <form action="/users/login/form" method="post">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+        <label for="password">Contraseña</label>
+        <input type="password" name="password" id="password" required>
+        <button type="submit">Iniciar Sesion</button>
+    </form>
+
+{% endblock %}

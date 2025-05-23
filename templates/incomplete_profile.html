@@ -1,0 +1,14 @@
+{% extends "hdrftr.html" %}
+{% block title %}Fill Blanks{% endblock %}
+{% block content %}
+
+<div>
+    <h1>Falta Informacion por llenar</h1>
+    <h2>Completa tu perfil</h2>
+    <p>Para poder usar todas las funcionalidades de la aplicacion, es necesario que completes tu perfil.</p>
+    <p>Por favor, completa la siguiente informacion:</p>
+    {{ form | safe }}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport Sys | {% block title %}{% endblock %} </title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/base.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Sport Sys</h1>
+        <nav>
+            <a href="/dashboard">Inicio</a>
+            {% if current_user %}
+                <a href="/users/logout/form">Cerrar Sesion</a>
+            {% endif %}
+            
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sport Sys</p>
+    </footer>
+</body>
+</html>

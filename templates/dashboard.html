@@ -1,0 +1,268 @@
+{% extends "hdrftr.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='styles/dashboard.css') }}">
+{% endblock %}
+
+
+{% if auth_user.role == 0 %}
+    <h1>Hola Administrador {{ current_user.name }}</h1>
+{% elif auth_user.role == 1 %}
+    <h1>Hola Entrenador {{ current_user.name }}</h1>
+{% elif auth_user.role == 2 %}
+    <h1>Hola deportista {{ current_user.name }}</h1>
+{% endif %}
+
+<h2>Directores Deportivos</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            {% if auth_user.role == 0 %}
+                <th>Fecha de Admisión</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for chief in chief_coaches_list %}
+        <tr>
+            <td>{{ chief.name }}</td>
+            <td>{{ chief.email }}</td>
+            <td>{{ chief.role }}</td>
+            {% if auth_user.role == 0 %}
+                <td>{{ chief.admission_date }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<h2>Entrenadores</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            {% if auth_user.role == 0 %}
+                <th>Fecha de Contratación</th>
+            {% endif %}
+            <th>Contactar</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for coach in coaches_list %}
+        <tr>
+            <td>{{ coach.name }}</td>
+            <td>{{ coach.email }}</td>
+            <td>{{ coach.phone }}</td>
+            {% if auth_user.role == 0 %}
+                <td>{{ coach.hiring_date }}</td>
+            {% endif %}
+            <td>
+                <form action="/chat/{{ coach.id }}" method="get">
+                    <button type="submit">Chat</button>
+                </form>
+            </td>
+            <td>
+                <form action="/coaches/edit/{{ coach.id }}" method="get">
+                    <button type="submit">Editar</button>
+                </form><br>
+                <form action="/coaches/delete/{{ coach.id }}" method="get">
+                    <button type="submit">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Disciplinas Deportivas Registradas</h2>
+
+<table border="1" cellpadding="6">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Horario</th>
+            <th>Instalación</th>
+            <th>Entrenadores (IDs)</th>
+            <th>Límite de Deportistas</th>
+            {% if auth_user.role == 2 %}
+                <th>Inscripcion</th>
+            {% elif auth_user.role == 0 %}
+                <th>Acciones</th>
+            {% endif %}
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% if sports %}
+            {% for sport in sports %}
+            <tr>
+                <td>{{ sport.name }}</td>
+                <td>{{ sport.description }}</td>
+                <td>{{ sport.schedule }}</td>
+                <td>{{ sport.location }}</td>
+                <td>
+                    <ul>
+                    {% for coach in sport.coaches %}
+                        <li>{{ coach.name }}</li>
+                    {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ sport.athletes_limit }}</td>
+                {% if auth_user.role == 2 %}
+                    <td>
+                        <form action="/sports/signin/{{sport.id}}" method="get">
+                            <button type="submit">Inscribir</button>
+                        </form>
+                        <br>
+                    </td>
+                {% elif auth_user.role == 0 %}
+                    <td>
+                        <form action="/edit/sport/{{sport.id}}" method="get">
+                            <button type="submit">Editar</button>
+                        </form>
+                        <form action="/sports/delete/{{sport.id}}" method="get">
+                            <button type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="7">No hay deportes registrados.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+{% if auth_user.role == 0 %}
+    <h2>Registrar deporte</h2>
+    <form action="/register/sport" method="post">
+        <label>Nombre:</label><input type="text" name="name" required><br>
+        <label>Descripcion:</label><input type="text" name="description" required><br>
+        <label>Horario:</label><input type="text" name="schedule" required><br>
+        <label>Entrenador</label>
+        <select name="coaches" multiple required size="3">
+            {% for coach in coaches_list %}
+                <option value="{{ coach.id }}">{{ coach.name }}</option>
+            {% endfor %}
+        </select><br>
+        <label>Ubicacion:</label><input type="text" name="location" required><br>
+        <label>Limite de inscritos:</label><input type="text" name="athletes_limit" required><br>
+        <button type="submit">Subir</button>
+    </form>
+{% endif %}
+
+
+{% if auth_user.role == 2 %}
+<h2>Mis Deportes</h2>
+    {% if my_sports_list %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Horario</th>
+                <th>Ubicación</th>
+                <th>Entrenadores</th>
+                <th>Límite de Deportistas</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sport in my_sports_list %}
+            <tr>
+                <td>{{ sport.name }}</td>
+                <td>{{ sport.description }}</td>
+                <td>{{ sport.schedule }}</td>
+                <td>{{ sport.location }}</td>
+                <td>
+                    <ul>
+                    {% for coach in sport.coaches %}
+                        <li>{{ coach.name }}</li>
+                    {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ sport.athletes_limit }}</td>
+                <td>
+                    <form action="/sports/unsign/{{sport.id}}" method="get">
+                        <button type="submit">Dar de baja</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No estás inscrito en ningún deporte actualmente.</p>
+    {% endif %}
+{% endif %}
+
+{% if auth_user.role < 2 %}
+    
+    <h2>Deportistas</h2>
+    {% if athletes_list %}
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Carrera</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>Admision</th>
+                    <th>Deportes</th>
+                    <th>Status</th>
+                    <th>Acciones</th>
+                    <th>Comunicacion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for athlete in athletes_list %}
+                    <tr>
+                        <td>{{ athlete.name }}</td>
+                        <td>{{ athlete.major }}</td>
+                        <td>{{ athlete.birth_day }}</td>
+                        <td>{{ athlete.admission_date }}</td>
+                        <td>
+                            <ul>
+                            {% for sport in athlete.disciplines %}
+                                <li>{{ sport.name }}</li>
+                            {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ athlete.status }}</td>
+                        <td>
+                            <form action="/athletes/edit/{{ athlete.id }}" method="get">
+                                <button type="submit">Editar</button>
+                            </form><br>
+                            <form action="/athletes/delete/{{ athlete.id }}" method="get">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/chat/{{ athlete.id }}" method="get">
+                                <button type="submit">Chat</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay deportistas registrados.</p>
+    {% endif %}
+
+    
+{% endif %}
+
+{% endblock %}

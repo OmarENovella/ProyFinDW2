@@ -1,0 +1,28 @@
+{% extends "hdrftr.html" %}
+{% block title %}Update{% endblock %}
+{% block content %}
+
+<h2>Editar Deporte</h2>
+<form action="/edit/sport/{{ sport.id }}" method="post">
+    <label>Nombre:</label>
+    <input type="text" name="name" value="{{ sport.name }}" required><br>
+
+    <label>Descripción:</label>
+    <input type="text" name="description" value="{{ sport.description }}" required><br>
+
+    <label>Ubicación:</label>
+    <input type="text" name="location" value="{{ sport.location }}" required><br>
+
+    <select name="coaches" multiple required size="3">
+        {% for coach in coaches_list %}
+            <option value="{{ coach.id }}">{{ coach.name }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Límite de atletas:</label>
+    <input type="number" name="athletes_limit" value="{{ sport.athletes_limit }}" required><br><br>
+
+    <button type="submit">Actualizar</button>
+</form>
+
+{% endblock %}
